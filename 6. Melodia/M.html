@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="M.js"></script>
+    
+</head>
+<body>
+    <h1>Execution of the melody</h1>
+    <p id="logger">There is no midi for you</p>
+    <label for="chooseOutput">Choose an output MIDI available</label>
+    <br>
+    <select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+        <option value="">No choice</option>
+    </select>
+    <h1>Insert Notes</h1>
+    <p>Do: 
+        <a href="#" onclick="insertNotes(60, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(60, 2000)">Metà</a>
+    </p>
+    <p>Re: 
+        <a href="#" onclick="insertNotes(62, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(62, 2000)">Metà</a>
+    </p>
+    <p>Mi: 
+        <a href="#" onclick="insertNotes(64, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(64, 2000)">Metà</a>
+    </p>
+    <p>Fa: 
+        <a href="#" onclick="insertNotes(65, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(65, 2000)">Metà</a>
+    </p>
+    <p>Sol: 
+        <a href="#" onclick="insertNotes(67, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(67, 2000)">Metà</a>
+    </p>
+    <p>La: 
+        <a href="#" onclick="insertNotes(69, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(69, 2000)">Metà</a>
+    </p>
+    <p>Si: 
+        <a href="#" onclick="insertNotes(71, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(71, 2000)">Metà</a>
+    </p>
+    <p>Do: 
+        <a href="#" onclick="insertNotes(72, 1000)">quarto</a>
+        <a href="#" onclick="insertNotes(72, 2000)">Metà</a>
+    </p>
+    <h2> Melody List</h2>
+    <p id="MelodyList">Empty for now</p>
+    <input type="button" value="Play" onclick="playMelody()">
+    <input type="button" value="Stop" onclick="stopMelody()">
+    <input type="button" value="EmptyList" onclick="emptyList()">
+</body>
+</html>

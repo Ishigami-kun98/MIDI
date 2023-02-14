@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tastiera</title>
+    <link rel="stylesheet" href="T.css">
+    <script src="T.js"></script>
+</head>
+<body>
+    <h1>Tastiera Virtuale</h1>
+    <p id="esito">No midi for you</p>
+    <div id="div_keyboard">
+        <div id="key60" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key62" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key64" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key65" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key67" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key69" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key71" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key72" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key74" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key76" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key77" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key79" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key81" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key83" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key84" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+    
+		<div id="key61" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:30px"></div>
+		<div id="key63" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:70px"></div>
+		<div id="key66" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:150px"></div>
+		<div id="key68" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:190px"></div>
+		<div id="key70" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:230px"></div>
+		<div id="key73" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:310px"></div>
+		<div id="key75" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:350px"></div>
+		<div id="key78" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:430px"></div>
+		<div id="key80" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:470px"></div>
+		<div id="key82" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:510px"></div>
+    </div>
+    <div>
+        <label for="chooseOutput"> Select a output</label> <br>
+            <select name="chooseOutput" id="chooseOutput" onchange="outputChange(value)">
+                <option value="Nothing" style="padding: 5px;">Nothing</option>
+            </select>
+        
+        <p>Instrument 
+            <br>
+            <input type="radio" name="instrument" id="piano" checked="checked" onclick="ProgramChange(0)">
+            <label for="piano">Piano</label>
+            <input type="radio" name="instrument" id="harpsichord" onclick="ProgramChange(6)">
+            <label for="harpsichord">harpsichord</label>
+            <input type="radio" name="instrument" id="organ" onclick="ProgramChange(19)">
+            <label for="organ">Organ</label>
+            <input type="radio" name="instrument" id="celesta" onclick="ProgramChange(8)">
+            <label for="celesta">Celesta</label>
+        </p>
+        
+    </div>
+
+</body>
+</html>

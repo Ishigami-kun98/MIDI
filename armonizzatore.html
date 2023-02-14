@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+	div {
+		clear:left;
+		padding:0;
+		padding-top:30px;
+		cursor:default;
+	}
+	
+	div.white_key {
+		clear:none;
+		height:100px;
+		width:38px;
+		border:#000 solid 1px;
+		background-color:ivory;
+		float:left;
+		cursor:pointer;
+	}
+	
+	div.black_key {
+		position:absolute;
+		height:50px;
+		width:20px;
+		border:#000 solid 1px;
+		background-color:black;
+		cursor:pointer;
+	}
+</style>
+<title>Tastiera e armonizzatore</title>
+	
+    <script>
+	
+	var midi = null;
+	var currentOutput = null;
+	var currentChordModel = "maj";
+
+	function startMIDI() {
+		if (navigator.requestMIDIAccess) {
+			navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+		} else {
+			document.getElementById("div_keyboard").style.display = "none";
+			document.getElementById("div_options").style.display = "none";
+			document.getElementById("log_string").innerHTML = "Attenzione: browser non compatibile!";
+		}
+	}
+
+	function onMIDISuccess(midiAccess) {
+		document.getElementById("log_string").innerHTML = "MIDI rilevato e pronto!";
+		midi = midiAccess;
+		getDefaultOutput();
+		
+		changeProgram(0, 43); // contrabbasso
+		changeProgram(1, 41); // viola
+		changeProgram(2, 40); // violino
+	}
+	
+	function onMIDIFailure(msg) {
+		document.getElementById("log_string").innerHTML = "Impossibile accedere alle risorse MIDI. Messaggio di errore: " + msg;
+	}
+	
+	function changeOutput(outputId) {
+		currentOutput = midi.outputs.get(outputId);
+	}
+
+	function getDefaultOutput() {
+		// sfrutto variabile globale
+		var outputsToString = "";
+		midi.outputs.forEach(function (output, key) {
+			if (outputsToString == "") {
+				outputsToString += "<option selected='selected' value='" + key + "'>" + output.name + "</option>"; 
+				currentOutput = output;
+			} else {
+				outputsToString += "<option value='" + key + "'>" + output.name + "</option>";
+			}
+		});
+		document.getElementById("chooseOutput").innerHTML = outputsToString;
+	}
+	
+	function manageNote(pitch1, isToPlay) {
+		var statusByte = isToPlay ? 0x90 : 0x80;	
+		var pitch2;
+		var pitch3;
+		switch (currentChordModel) {
+			case "maj": 
+				pitch2 = pitch1 + 4; 
+				pitch3 = pitch1 + 7;
+				break;
+			case "maj_36": 
+				pitch2 = pitch1 + 3; 
+				pitch3 = pitch1 + 8;
+				break;
+			case "maj_46": 
+				pitch2 = pitch1 + 5; 
+				pitch3 = pitch1 + 9;
+				break;
+			case "min": 
+				pitch2 = pitch1 + 3; 
+				pitch3 = pitch1 + 7;
+				break;
+			case "min_36": 
+				pitch2 = pitch1 + 4; 
+				pitch3 = pitch1 + 9;
+				break;
+			case "min_46": 
+				pitch2 = pitch1 + 5; 
+				pitch3 = pitch1 + 8;
+				break;
+		}
+		var msg1 = [statusByte, pitch1 - 12, 127];
+		var msg2 = [statusByte + 1, pitch2, 96]; 
+		var msg3 = [statusByte + 2, pitch3 + 12, 96];
+		currentOutput.send(msg1);
+		currentOutput.send(msg2);
+		currentOutput.send(msg3);
+		
+		try {
+			var div1 = document.getElementById("div" + pitch1);
+			var div2 = document.getElementById("div" + pitch2);
+			var div3 = document.getElementById("div" + pitch3);
+			if (isToPlay) {
+				div1.style.background = "SteelBlue";
+				div2.style.background = "PowderBlue";
+				div3.style.background = "PowderBlue";
+			} else {
+				if (pitch1 % 12 == 1 || pitch1 % 12 == 3 || pitch1 % 12 == 6 || pitch1 % 12 == 8 || pitch1 % 12 == 10)
+					div1.style.backgroundColor = "black";
+				else
+					div1.style.backgroundColor = "ivory";
+				if (pitch2 % 12 == 1 || pitch2 % 12 == 3 || pitch2 % 12 == 6 || pitch2 % 12 == 8 || pitch2 % 12 == 10)
+					div2.style.backgroundColor = "black";
+				else
+					div2.style.backgroundColor = "ivory";
+				if (pitch3 % 12 == 1 || pitch3 % 12 == 3 || pitch3 % 12 == 6 || pitch3 % 12 == 8 || pitch3 % 12 == 10)
+					div3.style.backgroundColor = "black";
+				else
+					div3.style.backgroundColor = "ivory";
+			}
+		}
+		catch {
+			;
+		}
+	}
+	
+	function changeChordModel(model) {
+		currentChordModel = model;
+	}
+	
+	function changeProgram(channel, patch) {
+		var allNotesOffMsg = [176 + channel, 123, 0];  // 176 corrisponde a 0xB0 (Control Change di tipo All Notes Off)
+		var programChangeMsg = [192 + channel, patch]; // 192 corrisponde a 0xC0
+		currentOutput.send(allNotesOffMsg);
+		currentOutput.send(programChangeMsg);
+	}
+	
+    </script>
+    
+</head>
+
+<body onload="startMIDI()">
+	<h1>Tastiera e armonizzatore</h1>
+	<p id="log_string"></p>
+    <div id="div_keyboard">
+   	  <div id="div48" class="white_key" onmousedown="manageNote(48, true)" onmouseup="manageNote(48, false)" onmouseout="manageNote(48, false)"></div>
+      <div id="div50" class="white_key" onmousedown="manageNote(50, true)" onmouseup="manageNote(50, false)" onmouseout="manageNote(50, false)"></div>
+      <div id="div52" class="white_key" onmousedown="manageNote(52, true)" onmouseup="manageNote(52, false)" onmouseout="manageNote(52, false)"></div>
+      <div id="div53" class="white_key" onmousedown="manageNote(53, true)" onmouseup="manageNote(53, false)" onmouseout="manageNote(53, false)"></div>
+      <div id="div55" class="white_key" onmousedown="manageNote(55, true)" onmouseup="manageNote(55, false)" onmouseout="manageNote(55, false)"></div>
+      <div id="div57" class="white_key" onmousedown="manageNote(57, true)" onmouseup="manageNote(57, false)" onmouseout="manageNote(57, false)"></div>
+      <div id="div59" class="white_key" onmousedown="manageNote(59, true)" onmouseup="manageNote(59, false)" onmouseout="manageNote(59, false)"></div>
+      <div id="div60" class="white_key" onmousedown="manageNote(60, true)" onmouseup="manageNote(60, false)" onmouseout="manageNote(60, false)"></div>
+      <div id="div62" class="white_key" onmousedown="manageNote(62, true)" onmouseup="manageNote(62, false)" onmouseout="manageNote(62, false)"></div>
+      <div id="div64" class="white_key" onmousedown="manageNote(64, true)" onmouseup="manageNote(64, false)" onmouseout="manageNote(64, false)"></div>
+      <div id="div65" class="white_key" onmousedown="manageNote(65, true)" onmouseup="manageNote(65, false)" onmouseout="manageNote(65, false)"></div>
+      <div id="div67" class="white_key" onmousedown="manageNote(67, true)" onmouseup="manageNote(67, false)" onmouseout="manageNote(67, false)"></div>
+      <div id="div69" class="white_key" onmousedown="manageNote(69, true)" onmouseup="manageNote(69, false)" onmouseout="manageNote(69, false)"></div>
+      <div id="div71" class="white_key" onmousedown="manageNote(71, true)" onmouseup="manageNote(71, false)" onmouseout="manageNote(71, false)"></div>
+      <div id="div72" class="white_key" onmousedown="manageNote(72, true)" onmouseup="manageNote(72, false)" onmouseout="manageNote(72, false)"></div>
+      <div id="div49" class="black_key" onmousedown="manageNote(49, true)" onmouseup="manageNote(49, false)" onmouseout="manageNote(49, false)" style="margin-left:30px"></div>
+      <div id="div51" class="black_key" onmousedown="manageNote(51, true)" onmouseup="manageNote(51, false)" onmouseout="manageNote(51, false)" style="margin-left:70px"></div>
+      <div id="div54" class="black_key" onmousedown="manageNote(54, true)" onmouseup="manageNote(54, false)" onmouseout="manageNote(54, false)" style="margin-left:150px"></div>
+      <div id="div56" class="black_key" onmousedown="manageNote(56, true)" onmouseup="manageNote(56, false)" onmouseout="manageNote(56, false)" style="margin-left:190px"></div>
+      <div id="div58" class="black_key" onmousedown="manageNote(58, true)" onmouseup="manageNote(58, false)" onmouseout="manageNote(58, false)" style="margin-left:230px"></div>
+      <div id="div61" class="black_key" onmousedown="manageNote(61, true)" onmouseup="manageNote(61, false)" onmouseout="manageNote(61, false)" style="margin-left:310px"></div>
+      <div id="div63" class="black_key" onmousedown="manageNote(63, true)" onmouseup="manageNote(63, false)" onmouseout="manageNote(63, false)" style="margin-left:350px"></div>
+      <div id="div66" class="black_key" onmousedown="manageNote(66, true)" onmouseup="manageNote(66, false)" onmouseout="manageNote(66, false)" style="margin-left:430px"></div>
+      <div id="div68" class="black_key" onmousedown="manageNote(68, true)" onmouseup="manageNote(68, false)" onmouseout="manageNote(68, false)" style="margin-left:470px"></div>
+      <div id="div70" class="black_key" onmousedown="manageNote(70, true)" onmouseup="manageNote(70, false)" onmouseout="manageNote(70, false)" style="margin-left:510px"></div>
+    </div>
+    <div id="div_options">
+		<p>
+			<label for="chooseOutput">Output MIDI</label><br>
+			<select id="chooseOutput" onchange="changeOutput(value)">
+				<option>Nessuno</option>
+			</select>
+		</p>
+		<p>
+			Modello di accordo<br>
+            <input type="radio" name="chord" id="maj" checked="checked" onclick="changeChordModel('maj')" />
+            <label for="maj">Triade magg. (terza magg., quinta giusta)</label><br>
+			<input type="radio" name="chord" id="maj_36" onclick="changeChordModel('maj_36')" />
+            <label for="maj_36">I rivolto (terza min., sesta min.)</label><br>
+			<input type="radio" name="chord" id="maj_46" onclick="changeChordModel('maj_46')" />
+            <label for="maj_46">II rivolto (quarta giusta, sesta magg.)</label><br>
+            <input type="radio" name="chord" id="min" onclick="changeChordModel('min')" />
+            <label for="min">Triade min.</label><br>
+			<input type="radio" name="chord" id="min_36" onclick="changeChordModel('min_36')" />
+            <label for="min_36">I rivolto (terza magg., sesta magg.)</label><br>
+			<input type="radio" name="chord" id="min_46" onclick="changeChordModel('min_46')" />
+            <label for="min_46">II rivolto (quarta giusta, sesta min.)</label><br>
+          </p>
+    </div>
+</body>
+</html>

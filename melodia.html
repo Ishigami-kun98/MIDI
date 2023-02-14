@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Esecuzione della melodia</title>
+	
+    <script>
+	
+	var midi = null;
+	var currentOutput = null;
+	var melody = new Array();
+	
+	function startMIDI() {
+		if (navigator.requestMIDIAccess) {
+			navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+		} else {
+			document.getElementById("esito").innerHTML = "Attenzione: browser non compatibile!";
+		}
+	}
+
+	function onMIDISuccess(midiAccess) {
+	  document.getElementById("esito").innerHTML = "MIDI rilevato e pronto!";
+	  midi = midiAccess;
+	  getDefaultOutput();
+	  var programChangeMsg = [0xC0, 56];
+	  currentOutput.send(programChangeMsg);
+	}
+	
+	function onMIDIFailure(msg) {
+	  document.getElementById("esito").innerHTML = "Non è stato possibile accedere alle risorse MIDI.<br />Messaggio di errore: " + msg;
+	}
+	
+	function changeOutput(portId) {
+		currentOutput.send([176, 123, 0]);  // Control Change sul canale 1 di tipo All Notes Off
+		currentOutput = midi.outputs.get(portId);
+	}
+
+	function getDefaultOutput() {
+		// sfrutto variabile globale
+		var outputsToString = "";
+		var defaultOutPort = null;
+		midi.outputs.forEach(function (output, key) {
+			if (outputsToString == "") {
+				outputsToString += "<option selected='selected' value='" + key + "'>" + output.name + "</option>"; 
+				currentOutput = output;
+			} else {
+				outputsToString += "<option value='" + key + "'>" + output.name + "</option>";
+			}
+		});
+		document.getElementById("chooseOutput").innerHTML = outputsToString;
+	}
+	
+	function addNote(pitch, duration) {
+		melody.push(pitch + ";" + duration);
+		if (document.getElementById("melody").innerHTML == "nessuna nota") {
+			document.getElementById("melody").innerHTML = pitch + " [" + duration + "s]";
+		} else {
+			document.getElementById("melody").innerHTML = document.getElementById("melody").innerHTML + "; " + pitch + " [" + duration + "s]";
+		}
+	}
+
+	function clearMelody() {
+		melody = new Array();
+		currentStep = 0;
+		document.getElementById("melody").innerHTML = "nessuna nota";
+	}
+	
+	// Timer
+	
+	var myTimer;
+	var currentStep = 0;
+	
+	function playMelody() {
+		if (currentStep < melody.length) {
+			currentOutput.send([176, 123, 0]); // All Notes Off, canale 1
+			var melodySplit = melody[currentStep].split(";")
+			var noteOnMsg = [0x90, melodySplit[0], 96];
+			currentOutput.send(noteOnMsg);
+			clearInterval(myTimer);
+			myTimer = setInterval(playMelody, melodySplit[1] * 1000); // BPM = 60
+			currentStep++;
+		} else {
+			stopMelody();
+		}
+	}
+	
+	function stopMelody() {
+		clearTimeout(myTimer);
+		currentOutput.send([176, 123, 0]); // All Notes Off, canale 1
+		currentStep = 0;		
+	}
+	
+	// Gestione della visibilità della pagina
+	
+	document.addEventListener("visibilitychange", function() {
+		stopMelody();
+	});
+	
+    </script>
+    
+</head>
+
+<body onload="startMIDI()">
+	<h1>Esecuzione della melodia</h1>
+    
+	<p id="esito"></p>
+	<p>Output MIDI<br />
+		<label for="chooseOutput"></label>
+		<select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+           	<option>Nessuno</option>
+        </select>
+	</p>
+      
+    <h2>Inserimento delle note</h2>
+	<table>
+		<tr>
+			<td>Do</td><td><a href="#" onclick="addNote(60, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(60, 2)">metà</a></td>
+		</tr>
+		<tr>
+			<td>Re</td><td><a href="#" onclick="addNote(62, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(62, 2)">metà</a></td>
+		</tr>
+		<tr>
+			<td>Mi</td><td><a href="#" onclick="addNote(64, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(64, 2)">metà</a></td>
+		</tr>
+		<tr>
+			<td>Fa</td><td><a href="#" onclick="addNote(65, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(65, 2)">metà</a></td>
+		</tr>
+		<tr>
+			<td>Sol</td><td><a href="#" onclick="addNote(67, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(67, 2)">metà</a></td>
+		</tr>
+		<tr>
+			<td>La</td><td><a href="#" onclick="addNote(69, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(69, 2)">metà</a></td>
+		</tr>
+		<tr>
+			<td>Si</td><td><a href="#" onclick="addNote(71, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(71, 2)">metà</a></td>
+		</tr>
+		<tr>
+			<td>Do</td><td><a href="#" onclick="addNote(72, 1)">quarto</a></td>
+			<td><a href="#" onclick="addNote(72, 2)">metà</a></td>
+		</tr>
+	</table>
+	
+	<h2>Melodia</h2>
+	<p id="melody">nessuna nota</p>
+	<input type="button" onclick="playMelody()" value="&#x23F5;"> 
+	<input type="button" onclick="stopMelody()" value="&#x23F9;"> 
+	<input type="button" onclick="clearMelody()" value="&#x1f5d1;">
+</body>
+</html>

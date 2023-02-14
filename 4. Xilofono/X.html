@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xilofono</title>
+    <script src="X.js"></script>
+</head>
+<body>
+    <img src="xilofono.jpg" alt="Xilofono" width="720" height="240" usemap="#Map" />
+    <map name="Map" id="Map">
+        <area shape="rect" coords="72,4,119,238" href="#" onmousedown="sendNote(48)" alt="Do" /> 
+        <area shape="rect" coords="140,5,188,235" href="#" onmousedown="sendNote(50)" alt="Re" />
+        <area shape="rect" coords="207,8,257,230" href="#" onmousedown="sendNote(52)" alt="Mi" />
+        <area shape="rect" coords="275,12,325,224" href="#" onmousedown="sendNote(53)" alt="Fa" />
+        <area shape="rect" coords="342,16,392,222" href="#" onmousedown="sendNote(55)" alt="Sol" />
+        <area shape="rect" coords="410,20,461,217" href="#" onmousedown="sendNote(57)" alt="La" />
+        <area shape="rect" coords="477,25,528,212" href="#" onmousedown="sendNote(59)" alt="Si" />
+        <area shape="rect" coords="547,29,598,213" href="#" onmousedown="sendNote(60)" alt="Do" />
+        <area shape="rect" coords="617,34,665,204" href="#" onmousedown="sendNote(62)" alt="Re" />
+    </map>
+    <p>Output MIDI: 
+        <select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+            <option> Nothing found </option>
+        </select>
+
+    </p>
+    <p>The used pitch is: <span id="pitch"></span></p>
+</body>
+</html>

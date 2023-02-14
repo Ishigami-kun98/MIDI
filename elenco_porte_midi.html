@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it">
+	<head>
+		<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+		<title>Elenco delle porte MIDI</title>
+		<script>
+			function onMIDISuccess(midiAccess) {
+			  document.getElementById('esito').innerHTML = 'MIDI rilevato e pronto!';  
+			  listInputsAndOutputs(midiAccess);
+			}
+			
+			function onMIDIFailure(msg) {
+			  document.getElementById('esito').innerHTML = 'Non è stato possibile accedere alle risorse MIDI.<br />Messaggio di errore: ' + msg;
+			}
+			
+			if (navigator.requestMIDIAccess) {
+				navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+			} else {
+				alert('Web MIDI API non supportata dal browser in uso.');
+			}
+
+			function listInputsAndOutputs(midi) {
+				var inPorts = '<h2>Porte di input</h2>';
+				inPorts += '<ul>';
+				// viene utilizzata la var globale midi; 
+				// in alternativa, sarebbe stato possibile passarla 
+				// come parametro all'invocazione di listInputsAndOutputs()
+				midi.inputs.forEach(function (input, key) {
+					inPorts += '<li>Input port "' + key + '"';
+					inPorts += '<ul>';
+					inPorts += '<li>id: "' + input.id + '" (uguale al valore di key)</li>';
+					inPorts += '<li>type: "' + input.type + '"</li>';
+					inPorts += '<li>manufacturer: "' + input.manufacturer + '"</li>';
+					inPorts += '<li>name: "' + input.name + '"</li>';
+					inPorts += '<li>version: "' + input.version + '"</li>';
+					inPorts += '</ul>';
+					inPorts += '</li>'
+				});
+				inPorts += '</ul>';
+				
+				var outPorts = '<h2>Porte di output</h2>';
+				outPorts += '<ul>';
+				midi.outputs.forEach(function (output, key) {
+					outPorts += '<li>Output port "' + key + '"';
+					outPorts += '<ul>';
+					outPorts += '<li>id: "' + output.id + '" (uguale al valore di key)</li>';
+					outPorts += '<li>type: "' + output.type + '"</li>';
+					outPorts += '<li>manufacturer: "' + output.manufacturer + '"</li>';
+					outPorts += '<li>name: "' + output.name + '"</li>';
+					outPorts += '<li>version: "' + output.version + '"</li>';
+					outPorts += '</ul>';
+					outPorts += '</li>'
+				});
+				outPorts += '</ul>';
+				
+				document.getElementById('esito').innerHTML += inPorts + outPorts; 
+			}
+		</script>
+	</head>
+
+	<body>
+		<h1>Test sulle porte MIDI rilevate</h1>
+		<p id='esito'>Web MIDI API non supportata.</p>
+	</body>
+</html>

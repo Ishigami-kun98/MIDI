@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Xilofono</title>
+	<script>
+		var midi = null;
+		var currentOutput = null;
+
+		function onMIDISuccess(midiAccess) {
+			document.getElementById("console").style.display = "none";
+			midi = midiAccess;
+			getDefaultOutput();
+		}
+		
+		function onMIDIFailure(msg) {
+		  document.getElementById("console").innerHTML = "<h1>Attenzione: impossibile caricare la Web MIDI API</h1>";
+		}
+		
+		function startMIDI() {
+			if (navigator.requestMIDIAccess) {
+				navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+			} else {
+				document.getElementById("console").innerHTML = "<h1>Attenzione: browser non compatibile!</h1>";
+			}
+		}
+		
+		function changeOutput(outputId) {
+			currentOutput = midi.outputs.get(outputId);
+			currentOutput.send([0xC0, 13]);
+		}
+
+		function getDefaultOutput() {
+			// sfrutto variabile globale
+			var outputsToString = "";
+			midi.outputs.forEach(function (output, key) {
+				if (outputsToString == "") {
+					outputsToString += "<option selected='selected' value='" + key + "'>" + output.name + "</option>"; 
+					changeOutput(key);
+				}
+				else
+					outputsToString += "<option value='" + key + "'>" + output.name + "</option>";
+			});
+			document.getElementById("chooseOutput").innerHTML = outputsToString;
+		}
+		
+		function sendNote(pitch) {
+			document.getElementById("pitch").innerHTML = pitch;
+			currentOutput.send([0x90, pitch, 0x40]);
+			currentOutput.send([0x80, pitch, 0], window.performance.now() + 500);
+		}
+	</script>
+</head>
+<body onload="startMIDI()">
+    <p>
+    	<img src="xilofono.jpg" alt="Xilofono" width="720" height="240" usemap="#Map" />
+        <map name="Map" id="Map">
+        	<!-- la funzione viene richiamata all'evento MouseDown -->
+            <area shape="rect" coords="72,4,119,238" href="#" onmousedown="sendNote(60)" alt="Do" /> 
+            <area shape="rect" coords="140,5,188,235" href="#" onmousedown="sendNote(62)" alt="Re" />
+            <area shape="rect" coords="207,8,257,230" href="#" onmousedown="sendNote(64)" alt="Mi" />
+            <area shape="rect" coords="275,12,325,224" href="#" onmousedown="sendNote(65)" alt="Fa" />
+            <area shape="rect" coords="342,16,392,222" href="#" onmousedown="sendNote(67)" alt="Sol" />
+            <area shape="rect" coords="410,20,461,217" href="#" onmousedown="sendNote(69)" alt="La" />
+            <area shape="rect" coords="477,25,528,212" href="#" onmousedown="sendNote(71)" alt="Si" />
+            <area shape="rect" coords="547,29,598,213" href="#" onmousedown="sendNote(72)" alt="Do" />
+            <area shape="rect" coords="617,34,665,204" href="#" onmousedown="sendNote(74)" alt="Re" />
+        </map>
+    </p>
+    <p id="console"></p>
+	<p>Output MIDI:
+	<select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+		<option>Nessuno</option>
+	</select>
+	</p>
+
+    <p>Pitch corrente: <span id="pitch">-</span></p>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<style>
+		div {
+			clear:left;
+			padding:0;
+			padding-top:30px;
+			cursor:default;
+		}
+		
+		div.white_key {
+			clear:none;
+			height:100px;
+			width:38px;
+			border:#000 solid 1px;
+			background-color:ivory;
+			float:left;
+			cursor:pointer;
+		}
+		
+		div.black_key {
+			position:absolute;
+			height:50px;
+			width:20px;
+			border:#000 solid 1px;
+			background-color:black;
+			cursor:pointer;
+		}
+	</style>
+	<title>Tastiera virtuale</title>
+	<script>
+	var midi = null;
+	var currentOutput = null;
+
+	function startMIDI() {
+		if (navigator.requestMIDIAccess) {
+			navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+		} else {
+			document.getElementById("div_keyboard").style.display = "none";
+			document.getElementById("div_options").style.display = "none";
+			document.getElementById("log_string").innerHTML = "Attenzione: browser non compatibile!";
+		}
+	}
+
+	function onMIDISuccess(midiAccess) {
+		document.getElementById("log_string").innerHTML = "MIDI rilevato e pronto!";
+		midi = midiAccess;
+		getcurrentOutput();
+		changeProgram(0);
+	}
+
+	function onMIDIFailure(msg) {
+		document.getElementById("log_string").innerHTML = "Impossibile accedere alle risorse MIDI. Messaggio di errore: " + msg;
+	}
+
+	function changeOutput(outputId) {
+		currentOutput.send([176, 123, 0]);
+		currentOutput = midi.outputs.get(outputId);
+	}
+	
+	function getcurrentOutput() {
+		var outputsToString = "";
+		midi.outputs.forEach(function (output, key) {
+			if (outputsToString == "") {
+				outputsToString += "<option selected='selected' value='" + key + "'>" + output.name + "</option>"; 
+				currentOutput = output;
+			} else {
+				outputsToString += "<option value='" + output.id + "'>" + output.name + "</option>";
+			}
+		});
+		document.getElementById("chooseOutput").innerHTML = outputsToString;
+	}
+	
+	function playNote(senderDiv) {
+		var pitch = senderDiv.id.substring(3, 5); 
+		var noteOnMsg = [0x90, pitch, 96];
+		currentOutput.send(noteOnMsg);
+		document.getElementById(senderDiv.id).style.backgroundColor = "orangered";
+	}
+	
+	function stopNote(senderDiv) {
+		var pitch = senderDiv.id.substring(3, 5); 
+		var noteOffMsg = [0x80, pitch, 0];
+		currentOutput.send(noteOffMsg);
+		if (pitch % 12 == 1 || pitch % 12 == 3 || pitch % 12 == 6 || pitch % 12 == 8 || pitch % 12 == 10)
+			document.getElementById(senderDiv.id).style.backgroundColor = "black";
+		else
+			document.getElementById(senderDiv.id).style.backgroundColor = "ivory";
+	}
+	
+	function changeProgram(patch) {
+		var allNotesOffMsg = [176, 123, 0];  // 176 corrisponde a 0xB0 (Control Change sul canale 1 di tipo All Notes Off)
+		var programChangeMsg = [192, patch]; // 192 corrisponde a 0xC0 (Program Change sul canale 1)
+		currentOutput.send(allNotesOffMsg);
+		currentOutput.send(programChangeMsg);
+	}
+	</script>
+</head>
+
+<body onload="startMIDI()">
+	<h1>Tastiera virtuale</h1>
+	<p id="log_string"></p>
+	<div id="div_keyboard">
+		<!-- white keys -->
+		<div id="key60" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key62" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key64" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key65" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key67" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key69" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key71" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key72" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key74" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key76" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key77" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key79" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key81" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key83" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<div id="key84" class="white_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)"></div>
+		<!-- black keys -->
+		<div id="key61" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:30px"></div>
+		<div id="key63" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:70px"></div>
+		<div id="key66" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:150px"></div>
+		<div id="key68" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:190px"></div>
+		<div id="key70" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:230px"></div>
+		<div id="key73" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:310px"></div>
+		<div id="key75" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:350px"></div>
+		<div id="key78" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:430px"></div>
+		<div id="key80" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:470px"></div>
+		<div id="key82" class="black_key" onmousedown="playNote(this)" onmouseup="stopNote(this)" onmouseout="stopNote(this)" style="margin-left:510px"></div>
+	</div>
+	<div id="div_options">
+		<p>
+			<label for="chooseOutput">Output MIDI</label><br>
+			<select id="chooseOutput" onchange="changeOutput(value)">
+			<option>Nessuno</option>
+			</select>
+		</p>
+		<p>
+			Strumento<br>
+			<input type="radio" name="instrument" id="piano" checked="checked" onclick="changeProgram(0)" />
+			<label for="piano">Pianoforte</label>
+			<input type="radio" name="instrument" id="harpsichord" onclick="changeProgram(6)" />
+			<label for="harpsichord">Clavicembalo</label>
+			<input type="radio" name="instrument" id="organ" onclick="changeProgram(19)" />
+			<label for="organ">Organo</label>
+			<input type="radio" name="instrument" id="celesta" onclick="changeProgram(8)" />
+			<label for="celesta">Celesta</label>
+		</p>
+	</div>
+</body>
+</html>

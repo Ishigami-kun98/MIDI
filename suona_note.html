@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Suona note</title>
+		<script>
+			var midi = null;
+			var defaultOutPort = null;
+
+			function onMIDISuccess(midiAccess) {
+			  document.getElementById("esito").innerHTML = "MIDI rilevato e pronto!";
+			  midi = midiAccess;
+			  getDefaultOutput();
+			}
+			
+			function onMIDIFailure(msg) {
+			  document.getElementById("esito").innerHTML = "Non è stato possibile accedere alle risorse MIDI.<br />Messaggio di errore: " + msg;
+			}
+			
+			navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+
+			function getDefaultOutput() {
+				// sfrutto variabile globale
+				var outPortName = "";
+				midi.outputs.forEach(function (output, key) {
+					if (!defaultOutPort) {
+						defaultOutPort = key;
+						outPortName = output.name;
+					}
+					// tramite questo forEach, la porta che rimane selezionata è l'ultima tra quelle disponibili
+				});
+				document.getElementById("esito").innerHTML += "<br>Porta di output selezionata: " + outPortName;
+			}
+			
+			function playNote(pitch, duration) {
+				var noteOnMessage = [0x90, pitch, 0x7f, 0x90, pitch + 4, 0x7f];
+				var noteOffMessage = [0x80, pitch, 0x40, 0x80, pitch + 4, 0x40];				
+				var output = midi.outputs.get(defaultOutPort);
+				output.send(noteOnMessage); 										// esecuzione immediata
+				output.send(noteOffMessage, window.performance.now() + duration); 	// note off, do centrale, release velocity = 64, esecuzione differita di duration ms
+			}
+		</script>
+	</head>
+
+	<body>
+		<h1>Souna note</h1>
+		<p id="esito">Web MIDI API non supportata.</p>
+		<p><a href="#" onclick="playNote(60, 500)">Suona triade maggiore sul Do [0.5s]</a></p>
+		<p><a href="#" onclick="playNote(67, 3000)">Suona triade maggiore sul Sol [3s]</a></p>
+	</body>
+</html>
