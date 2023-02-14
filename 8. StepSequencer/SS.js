@@ -4,6 +4,7 @@ var list = new Array(X);
 var currentRow = -1;
 var currentOutput;
 var midi = null;
+var play = false;
 
 if (navigator){
     navigator.requestMIDIAccess().then(s,f);
@@ -26,7 +27,7 @@ function settingUp(){
         }
         txt += "<option value=" + key + ">" + output.name + "</option>";
     });
-
+    document.getElementById('s').innerHTML = "<option value='250'> 250 </option> <option value='500'> 500 </option> <option value='1000'> 1000 </option>";
     document.getElementById('p').innerHTML = txt;
 }
 function prepareTable() {
@@ -127,4 +128,22 @@ function checkKey(e) {
        playNext(false);
     else if (e.keyCode == '39') // freccia dx
        playNext(true);
+}
+
+var myTimer;
+var interval  = 1000;
+function enableTimer(){
+    play = !play;
+    if (play){
+        clearInterval(myTimer);
+        myTimer = setInterval(function () {playNext(true);}, interval);
+        document.getElementById("playpause").innerHTML = "<b>||</b>";
+    }else{
+        clearInterval(myTimer);
+        document.getElementById("playpause").innerHTML = "&#9654;";
+    }
+}
+
+function speedUp(value){
+    interval = value;
 }

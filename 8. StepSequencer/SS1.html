@@ -11,9 +11,19 @@
 <body onload="prepareTable()">
     <div id="container"></div>
 	<div id="controls">
-        <span><button onclick="playNext(false)">&#9665;</button>&nbsp;&nbsp;&nbsp;<button onclick="playNext(true)">&#9655;</button></span>
+        <span>
+            <button onclick="playNext(false)">&#9665;</button> &nbsp;&nbsp;&nbsp;
+            <button onclick="playNext(true)">&#9655;</button>&nbsp;&nbsp;&nbsp;
+            <button id="playpause" onclick="enableTimer()">&#9654;</button> 
+        </span>
         <span class ="output">Select Output MIDI
             <select name="p" id="p" onchange="changeOutput(value)">
+                <option value="Null">Nothing</option>
+            </select>
+        </span>
+
+        <span class ="speed">Select A Play Speed
+            <select name="s" id="s" onchange="speedUp(value)">
                 <option value="Null">Nothing</option>
             </select>
         </span>
