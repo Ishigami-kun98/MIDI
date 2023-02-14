@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accordi</title>
+    <script src="A.js"></script>
+</head>
+<body>
+    <h1>Accordo</h1>
+    <label for="chooseNumber"> Select a Number for accordo</label>
+    <select name="chooseNumber" id="chooseNumber" onchange="changeNumber(value)">
+        
+        <option value="null">Nothing</option>
+    </select>
+
+    <p> Select a midi output
+        <select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+        <option value="">null</option>
+    </select>
+    </p>
+
+    <p>Select a timbro
+        <select name="chooseTimbro" id="chooseTimbro" onchange="ProgramChange(value)">
+        <option value="33"> 33 </option>
+        <option value="35"> 35 </option>
+        <option value="37"> 37 </option>
+        </select>
+    </p>
+
+    <p><button onclick="playAccord(true)">Play</button> <button onclick="playAccord(false)">Stop</button></p>
+    
+    
+</body>
+</html>
