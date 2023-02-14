@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Step sequencer</title>
+	<style>
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			align-content: space-around;
+			justify-content: space-around;
+			height: 98vh;
+			font-family: Arial, Helvetica, sans-serif;
+			color: DarkMagenta; 
+		}
+	
+		div#controls {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			height: 5vh;
+		}
+		
+		button {
+			font-size: 1.8vh;
+			height: 4vh;
+			width: 4vh;
+			color: DarkMagenta;
+			background-color: Lavender;
+			margin-bottom: 5px;
+		}
+		
+		span.output {
+			font-size: 1.5vh;
+		}
+		
+		select {
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 1.5vh;
+			color: DarkMagenta;
+			background-color: Lavender;
+		}
+		
+		div#container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-content: space-between;
+			justify-content: space-between;
+			width: 90vh;
+			height: 90vh;
+		}
+		
+		div.cell {
+			background-color: DarkMagenta; 
+			cursor: pointer;
+		}
+	</style>
+	
+	<script>
+		let midi = null;
+		let output = null;
+
+		function onMIDISuccess(midiAccess) {
+		  console.log("MIDI rilevato e pronto!");
+		  midi = midiAccess;
+		  getDefaultOutput();
+		}
+		
+		function onMIDIFailure(msg) {
+		  console.log("Problema con MIDI");
+		}
+		
+		if (navigator.requestMIDIAccess)
+			navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+		else
+			window.alert("Attenzione: Web MIDI API non supportata");
+		
+		function changeOutput(outputId) {
+			output = midi.outputs.get(outputId);
+			let programChangeMessage = [0xC0, 10]; // Music box
+			output.send(programChangeMessage);
+		}
+
+		function getDefaultOutput() {
+			let outputsToString = "";
+			midi.outputs.forEach(function (output, key) {
+				if (outputsToString == "") {
+					outputsToString += "<option selected='selected' value='" + key + "'>" + output.name + "</option>"; 
+					changeOutput(key);
+				} else
+					outputsToString += "<option value='" + key + "'>" + output.name + "</option>";
+			});
+			document.getElementById("chooseOutput").innerHTML = outputsToString;
+		}
+		
+		const X = 8;
+		const Y = 8;
+		
+		function prepareTable() {
+			let stringCells = "";
+			
+			let dim_x = (90 - (X - 1)) / X;
+			let dim_y = (90 - (Y - 1)) / Y;
+			for (let i = 0; i < Y; i++)
+				for (let j = 0; j < X; j++)
+					stringCells += "<div class='cell' style='width:" + dim_x + "vh; height:" + dim_y + "vh' " 
+						+ "id='div_" + i + "_" + j + "' "
+						+ "onclick='set(" + i + "," + j + ")'></div>";
+			document.getElementById("container").innerHTML = stringCells;
+		}
+		
+		var dataStructure = new Array(Y);
+		for (let i = 0; i < dataStructure.length; i++) {
+			dataStructure[i] = new Array(X);
+			for (let j = 0; j < X; j++)
+				dataStructure[i][j] = 0;
+		}
+		
+		function set(i, j) {
+			currentDiv = document.getElementById("div_" + i + "_" + j);
+			if (dataStructure[i][j] == 0) {
+				dataStructure[i][j] = 1;
+				currentDiv.style.backgroundColor = "Orange";
+			} else {
+				dataStructure[i][j] = 0;
+				currentDiv.style.backgroundColor = "DarkMagenta";
+			}
+		}
+		
+		let currentPos = -1;
+		
+		document.onkeydown = checkKey;
+		function checkKey(e) {
+			if (e.keyCode == '37')
+			   playNext(false);
+			else if (e.keyCode == '39')
+			   playNext(true);
+		    else if (e.keyCode == '32')
+			   enableTimer();
+		}
+		
+		function playNext(isForward) {
+			if (isForward) {
+				if (currentPos == (X - 1))
+					currentPos = 0;
+				else
+					currentPos++;
+			} else {
+				if (currentPos <= 0)
+					currentPos = X - 1;
+				else
+					currentPos--;
+			}
+			for (let i = 0; i < Y; i++)
+				for (let j = 0; j < X; j++) {
+					let currentDiv = document.getElementById("div_" + i + "_" + j);
+					currentDiv.style.backgroundColor = (dataStructure[i][j] == 0) ? "DarkMagenta" : "Orange";
+				}	
+			for (let i = 0; i < Y; i++) {
+				let currentDiv = document.getElementById("div_" + i + "_" + currentPos);
+				if (dataStructure[i][currentPos] == 1) {
+					currentDiv.style.backgroundColor = "Gold";
+					let pitchToPlay = 72 - i * 2;
+					let noteOnMessage = [0x90, pitchToPlay, 64];
+					let noteOffMessage = [0x80, pitchToPlay, 0];
+					output.send(noteOnMessage);
+					output.send(noteOffMessage,window.performance.now() + 500);
+				} else
+					currentDiv.style.backgroundColor = "DarkOrchid";
+			}
+		}
+		
+		// Timer
+		let isPlaying = false;
+		let myTimer;
+		function enableTimer() {
+			if (!isPlaying) {
+				myTimer = setInterval(function(){ playNext(true); }, 500); // Possibile miglioria: BPM diverso da 120
+				document.getElementById("playpause").innerHTML = "<b>||</b>";
+			} else {
+				clearInterval(myTimer);
+				document.getElementById("playpause").innerHTML = "&#9654;";
+			}
+			isPlaying = !isPlaying;
+		}
+		
+	</script>
+</head>
+
+<body onload="prepareTable()">
+	<div id="container"></div>
+	<div id="controls">
+		<span><button onclick="playNext(false)">&#9665;</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="playNext(true)">&#9655;</button>
+			&nbsp;&nbsp;&nbsp;<button id="playpause" onclick="enableTimer()">&#9654;</button>
+		</span>
+		<span class="output">Output MIDI
+		<select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+			<option>Nessuno</option>
+		</select></span>
+	</div>
+</body>
+
+</html>

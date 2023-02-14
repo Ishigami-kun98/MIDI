@@ -1,0 +1,29 @@
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: space-around;
+    justify-content: space-around;
+    height: 98vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: DarkMagenta; 
+}
+
+div#controls {
+    height: 5vh;
+}
+
+div#container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: space-between;
+    justify-content: space-between;
+    width: 90vh;
+    height: 90vh;
+}
+
+div.cell {
+    background-color: DarkMagenta; 
+    cursor : pointer;
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Step sequencer</title>
+	<style>
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			align-content: space-around;
+			justify-content: space-around;
+			height: 98vh;
+			font-family: Arial, Helvetica, sans-serif;
+			color: DarkMagenta; 
+		}
+	
+		div#controls {
+			height: 5vh;
+		}
+		
+		div#container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-content: space-between;
+			justify-content: space-between;
+			width: 90vh;
+			height: 90vh;
+		}
+		
+		div.cell {
+			background-color: DarkMagenta; 
+			cursor: pointer;
+		}
+	</style>
+	
+	<script>
+		const X = 8;
+		const Y = 8;
+		
+		function prepareTable() {
+			var stringCells = "";
+			
+			var dim_x = (90 - (X - 1)) / X;
+			var dim_y = (90 - (Y - 1)) / Y;
+			for (var i = 0; i < Y; i++)
+				for (var j = 0; j < X; j++)
+					stringCells += "<div class='cell' style='width:" + dim_x + "vh; height:" + dim_y + "vh' " 
+						+ "id='div_" + i + "_" + j + "' " // aggiunto l'id
+						+ "onclick='set(" + i + "," + j + ")'></div>"; // aggiunto un metodo set
+			document.getElementById("container").innerHTML = stringCells;
+		}
+		
+		// creazione e inizializzazione della struttura dati
+		var dataStructure = new Array(Y);
+		for (var i = 0; i < dataStructure.length; i++) {
+			dataStructure[i] = new Array(X);
+			for (var j = 0; j < X; j++)
+				dataStructure[i][j] = 0;
+		}
+		
+		function set(i, j) {
+			currentDiv = document.getElementById("div_" + i + "_" + j);
+			if (dataStructure[i][j] == 0) {
+				dataStructure[i][j] = 1;
+				currentDiv.style.backgroundColor = "Orange";
+				window.alert ("Hai selezionato la cella in posizione x=" + (j + 1) + ", y=" + (i + 1)); // +1 per rendere "leggibili" gli indici
+			} else {
+				dataStructure[i][j] = 0;
+				currentDiv.style.backgroundColor = "DarkMagenta";
+				window.alert ("Hai deselezionato la cella in posizione x=" + (j + 1) + ", y=" + (i + 1)); 
+			}
+		}
+	</script>
+</head>
+
+<body onload="prepareTable()">
+	<div id="container"></div>
+	<div id="controls">Spazio per i controlli</div>
+</body>
+
+</html>

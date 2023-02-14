@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Step sequencer</title>
+	<style>
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			align-content: space-around;
+			justify-content: space-around;
+			height: 98vh;
+			font-family: Arial, Helvetica, sans-serif;
+			color: DarkMagenta; 
+		}
+	
+		div#controls {
+			height: 5vh;
+			font-size: 3vh;
+		}
+		
+		button {
+			font-size: 1.8vh;
+			height: 4vh;
+			width: 4vh;
+			color: DarkMagenta;
+			background-color: Lavender;
+			margin-bottom: 5px;
+		}
+		
+		div#container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-content: space-between;
+			justify-content: space-between;
+			width: 90vh;
+			height: 90vh;
+		}
+		
+		div.cell {
+			background-color: DarkMagenta; 
+			cursor: pointer;
+		}
+	</style>
+	
+	<script>
+		const X = 8;
+		const Y = 8;
+		
+		function prepareTable() {
+			var stringCells = "";
+			
+			var dim_x = (90 - (X - 1)) / X;
+			var dim_y = (90 - (Y - 1)) / Y;
+			for (var i = 0; i < Y; i++)
+				for (var j = 0; j < X; j++)
+					stringCells += "<div class='cell' style='width:" + dim_x + "vh; height:" + dim_y + "vh' " 
+						+ "id='div_" + i + "_" + j + "' "
+						+ "onclick='set(" + i + "," + j + ")'></div>";
+			document.getElementById("container").innerHTML = stringCells;
+		}
+		
+		var dataStructure = new Array(Y);
+		for (var i = 0; i < dataStructure.length; i++) {
+			dataStructure[i] = new Array(X);
+			for (var j = 0; j < X; j++)
+				dataStructure[i][j] = 0;
+		}
+		
+		function set(i, j) {
+			currentDiv = document.getElementById("div_" + i + "_" + j);
+			if (dataStructure[i][j] == 0) {
+				dataStructure[i][j] = 1;
+				currentDiv.style.backgroundColor = "Orange";
+			} else {
+				dataStructure[i][j] = 0;
+				currentDiv.style.backgroundColor = "DarkMagenta";
+			}
+		}
+		
+		var currentPos = -1; // variabile per tenere traccia della posizione corrente
+		
+		// gestione della tastiera come metodo di input alternativo
+		document.onkeydown = checkKey;
+		function checkKey(e) {
+			if (e.keyCode == '37') // freccia sx
+			   playNext(false);
+			else if (e.keyCode == '39') // freccia dx
+			   playNext(true);
+		}
+		
+		// funzione per la gestione dell'avanzamento passo passo
+		function playNext(isForward) {
+			if (isForward) {
+				if (currentPos == (X - 1)) // non è necessario gestire il caso currentPos == -1, ci pensa l'else
+					currentPos = 0;
+				else
+					currentPos++;
+			} else {
+				if (currentPos <= 0) // gestisce anche il caso currentPos == -1
+					currentPos = X - 1;
+				else
+					currentPos--;
+			}
+			// ricolora tutte le celle con i colori originali (step corrente non evidenziato)
+			for (var i = 0; i < Y; i++)
+				for (var j = 0; j < X; j++) {
+					var currentDiv = document.getElementById("div_" + i + "_" + j);
+					currentDiv.style.backgroundColor = (dataStructure[i][j] == 0) ? "DarkMagenta" : "Orange";
+				}
+			// colora la colonna corrente
+			for (var i = 0; i < Y; i++) {
+				var currentDiv = document.getElementById("div_" + i + "_" + currentPos);
+				if (dataStructure[i][currentPos] == 1)
+					currentDiv.style.backgroundColor = "Gold";
+				else
+					currentDiv.style.backgroundColor = "DarkOrchid";
+			}
+		}
+	</script>
+</head>
+
+<body onload="prepareTable()">
+	<div id="container"></div>
+	<div id="controls">
+		<span><button onclick="playNext(false)">&#9665;</button>&nbsp;&nbsp;&nbsp;<button onclick="playNext(true)">&#9655;</button></span>
+	</div>
+</body>
+
+</html>
