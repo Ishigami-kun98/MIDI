@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armonizzatore</title>
+    <link rel="stylesheet" href="A.css">
+    <script src="A.js"></script>
+</head>
+<body>
+    <h1>Tastiera con armonizzatore</h1>
+    <p id="logger"> 尼 midi 准备好了 nonono</p>
+    <div>
+        <div id="div48" class="white_key" onmousedown="manageNote(48, true)" onmouseup="manageNote(48, false)" onmouseout="manageNote(48, false)"></div>
+        <div id="div50" class="white_key" onmousedown="manageNote(50, true)" onmouseup="manageNote(50, false)" onmouseout="manageNote(50, false)"></div>
+        <div id="div52" class="white_key" onmousedown="manageNote(52, true)" onmouseup="manageNote(52, false)" onmouseout="manageNote(52, false)"></div>
+        <div id="div53" class="white_key" onmousedown="manageNote(53, true)" onmouseup="manageNote(53, false)" onmouseout="manageNote(53, false)"></div>
+        <div id="div55" class="white_key" onmousedown="manageNote(55, true)" onmouseup="manageNote(55, false)" onmouseout="manageNote(55, false)"></div>
+        <div id="div57" class="white_key" onmousedown="manageNote(57, true)" onmouseup="manageNote(57, false)" onmouseout="manageNote(57, false)"></div>
+        <div id="div59" class="white_key" onmousedown="manageNote(59, true)" onmouseup="manageNote(59, false)" onmouseout="manageNote(59, false)"></div>
+        <div id="div60" class="white_key" onmousedown="manageNote(60, true)" onmouseup="manageNote(60, false)" onmouseout="manageNote(60, false)"></div>
+        <div id="div62" class="white_key" onmousedown="manageNote(62, true)" onmouseup="manageNote(62, false)" onmouseout="manageNote(62, false)"></div>
+        <div id="div64" class="white_key" onmousedown="manageNote(64, true)" onmouseup="manageNote(64, false)" onmouseout="manageNote(64, false)"></div>
+        <div id="div65" class="white_key" onmousedown="manageNote(65, true)" onmouseup="manageNote(65, false)" onmouseout="manageNote(65, false)"></div>
+        <div id="div67" class="white_key" onmousedown="manageNote(67, true)" onmouseup="manageNote(67, false)" onmouseout="manageNote(67, false)"></div>
+        <div id="div69" class="white_key" onmousedown="manageNote(69, true)" onmouseup="manageNote(69, false)" onmouseout="manageNote(69, false)"></div>
+        <div id="div71" class="white_key" onmousedown="manageNote(71, true)" onmouseup="manageNote(71, false)" onmouseout="manageNote(71, false)"></div>
+        <div id="div72" class="white_key" onmousedown="manageNote(72, true)" onmouseup="manageNote(72, false)" onmouseout="manageNote(72, false)"></div>
+        <div id="div49" class="black_key" onmousedown="manageNote(49, true)" onmouseup="manageNote(49, false)" onmouseout="manageNote(49, false)" style="margin-left:30px"></div>
+        <div id="div51" class="black_key" onmousedown="manageNote(51, true)" onmouseup="manageNote(51, false)" onmouseout="manageNote(51, false)" style="margin-left:70px"></div>
+        <div id="div54" class="black_key" onmousedown="manageNote(54, true)" onmouseup="manageNote(54, false)" onmouseout="manageNote(54, false)" style="margin-left:145px"></div>
+        <div id="div56" class="black_key" onmousedown="manageNote(56, true)" onmouseup="manageNote(56, false)" onmouseout="manageNote(56, false)" style="margin-left:185px"></div>
+        <div id="div58" class="black_key" onmousedown="manageNote(58, true)" onmouseup="manageNote(58, false)" onmouseout="manageNote(58, false)" style="margin-left:225px"></div>
+        <div id="div61" class="black_key" onmousedown="manageNote(61, true)" onmouseup="manageNote(61, false)" onmouseout="manageNote(61, false)" style="margin-left:305px"></div>
+        <div id="div63" class="black_key" onmousedown="manageNote(63, true)" onmouseup="manageNote(63, false)" onmouseout="manageNote(63, false)" style="margin-left:345px"></div>
+        <div id="div66" class="black_key" onmousedown="manageNote(66, true)" onmouseup="manageNote(66, false)" onmouseout="manageNote(66, false)" style="margin-left:425px"></div>
+        <div id="div68" class="black_key" onmousedown="manageNote(68, true)" onmouseup="manageNote(68, false)" onmouseout="manageNote(68, false)" style="margin-left:465px"></div>
+        <div id="div70" class="black_key" onmousedown="manageNote(70, true)" onmouseup="manageNote(70, false)" onmouseout="manageNote(70, false)" style="margin-left:505px"></div>
+    </div>
+    <div>
+        <label for="chooseOutput">出口midi选项</label>
+        <br>
+        <select name="chooseOutput" id="chooseOutput" onchange="chooseOutput(value)">
+            <option>无</option>
+        </select>
+    </div>
+    <h2>Accord model</h2>
+    <p>
+        <input type="radio" onclick="changeAccord(0)" id="chord1" checked="checked" name ='a'/>
+        <label for="chord1">Triade magg. (terza magg., quinta giusta)</label> <br>
+        <input type="radio" onclick="changeAccord(1)" id="chord2" name="a"/>
+        <label for="chord2">I rivolto (terza min., sesta min.)</label><br>
+        <input type="radio" onclick="changeAccord(2)" id="chord3" name="a"/>
+        <label for="chord3">II rivolto (quarta giusta, sesta magg.)</label><br>
+        <input type="radio" onclick="changeAccord(3)" id="chord4" name="a"/>
+        <label for="chord4">Triade min.</label><br>
+        <input type="radio" onclick="changeAccord(4)" id="chord5" name="a"/>
+        <label for="chord5">I rivolto (terza magg., sesta magg.)</label><br>
+        <input type="radio" onclick="changeAccord(5)" id="chord6" name="a"/>
+        <label for="chord6">II rivolto (quarta giusta, sesta min.)</label><br>
+    </p>
+
+</body>
+</html>
