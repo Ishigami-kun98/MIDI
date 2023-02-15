@@ -10,6 +10,11 @@
 <body>
     <h1>Midi Console</h1>
     <p id="inputs">No Midi input found</p>
+    <label for="chooseOutput">chooseOutput</label>
+    <select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+        <option value="n">null</option> 
+    </select>
+    <br>
     <a href="#" onclick="clearConsole()">Clear the console</a>
     <p>Latest Message: <br>
         <span id="result"></span>
