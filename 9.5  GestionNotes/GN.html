@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione note</title>
+    <script src="GN.js"></script>
+</head>
+<body>
+    <h1>Gestione delle note On e Off</h1>
+    <label for="chooseOutput">chooseOutput</label>
+    <select name="chooseOutput" id="chooseOutput">
+        <option value="null">No Midi For you</option>
+    </select>
+    <p id="inputs"> There is no input for you</p>
+    <input type="radio" onclick="changeN(3)" checked = "checked" name="changeN"> 3 
+    <input type="radio" onclick="changeN(4)" name="changeN"> 4 
+    <input type="radio" onclick="changeN(5)" name="changeN"> 5 
+    <input type="radio" onclick="changeN(7)" name="changeN"> 7 
+</body>
+</html>

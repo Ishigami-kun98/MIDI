@@ -29,6 +29,11 @@ function resetMsg(){
     document.getElementById('results').innerHTML = "Here's the result";
 }
 
+function changeN(value){
+    currentOutput.send([176, 123, 0]);
+    n = value;
+}
+
 function getMIDIMessage(midiMessage){
     var text = "";
     var input = midiMessage.data;

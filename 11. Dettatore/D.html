@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettatore</title>
+    <script src="D.js"></script>
+</head>
+<body>
+    <label for="chooseOutput">Output MIDI : </label>
+    <select name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+    <option value="Null">Nothing</option>
+    </select>
+    <p>Object Lesson, rebuild the sequence: </p>
+    <button onclick="playMelody()">Play</button>
+    <p>Ur pitch sequence is : 
+        <span id="inputs"></span>
+    </p>
+</body>
+</html>

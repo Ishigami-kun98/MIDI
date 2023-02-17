@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor input</title>
+    <style>
+        .display1{
+            width: 49%;
+            float: left;
+            border-color: black;
+            border:5px solid #28c9ac;
+        }
+        .display2{
+            width: 49%;
+            float: right;
+            border-color: black;
+            border:5px solid #28c9ac;
+        }
+    </style>
+    <script src="M.js"></script>
+</head>
+<body>
+    <h1 >Used for monitor the input given into the console</h1>
+    <p style="height: 5vh; border:5px solid #28c9ac; text-align: center">choose out
+    <select  name="chooseOutput" id="chooseOutput" onchange="changeOutput(value)">
+        <option value="null">Nothing</option>
+    </select>
+    </p>
+    <div class="display1">
+        <p id="result1">
+            Type msg :
+
+        </p>
+    </div>
+    <div class="display2">
+        <p id="result2">
+            Channel msg :
+        </p>
+    </div>
+</body>
+</html>
