@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled accord</title>
+    <script src="SA.js"></script>
+    <link rel="stylesheet" href="SA.css">
+</head>
+<body>
+    <h1 >Added CSS style accordo</h1>
+    <p>This works only if there is a input midi device connected the main Pitch selected is 48</p>
+    <h2 >Choose number of chord
+    <select name="x" id="x" onchange="changeX(value)">
+        <option selected disabled>Null</option>
+    </select>
+    </h2>
+
+    <h2 >Choose number of chord
+        <select name="chooseOutput" id="chooseOutput" onchange="chageOutput(value)">
+            <option selected disabled>Null</option>
+        </select>
+        </h2>
+    <div class="div1">
+        <button onclick="Play()">Play</button>
+        <button onclick="Stop()">Stop</button>
+    </div>
+    
+</body>
+</html>
